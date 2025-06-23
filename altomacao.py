@@ -275,8 +275,8 @@ def main():
     driver = None  # Inicializa driver como None
     try:
         driver = configurar_navegador(caminho_user_data, nome_do_perfil)
-        realizar_pesquisas_aleatorias(driver, total_pesquisas,nivel)
         executar_automacao_rewards(driver)
+        realizar_pesquisas_aleatorias(driver, total_pesquisas,nivel)
         print(f"\n{Estilos.BOLD}{'='*60}{Estilos.ENDC}")
         print(f"{Estilos.SUCCESS_ICON} {Estilos.HEADER}{Estilos.BOLD} TODOS OS CARTÕES FORAM PROCESSADOS! {Estilos.SUCCESS_ICON}{Estilos.ENDC}")
 
