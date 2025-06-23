@@ -95,6 +95,7 @@ Conteúdo do arquivo `.env`:
 
 ```ini
 # Caminho para a pasta de dados do usuário do Chrome.
+# ESTE É UM CAMINHO EXISTENTE NO SEU COMPUTADOR, NÃO DEVE SER CRIADO OU MOVIDO PARA A PASTA DO PROJETO.
 # Ex: C:\Users\SEU_USUARIO\AppData\Local\Google\Chrome\User Data
 CHROME_DATA_PATH="C:\Users\SEU_USUARIO\AppData\Local\Google\Chrome\User Data"
 
