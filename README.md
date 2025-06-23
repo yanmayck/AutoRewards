@@ -94,11 +94,6 @@ O script precisa saber onde encontrar seu perfil do Chrome e outras configuraç�
 Conteúdo do arquivo `.env`:
 
 ```ini
-# Caminho para a pasta de dados do usuário do Chrome.
-# ESTE É UM CAMINHO EXISTENTE NO SEU COMPUTADOR, NÃO DEVE SER CRIADO OU MOVIDO PARA A PASTA DO PROJETO.
-# Ex: C:\Users\SEU_USUARIO\AppData\Local\Google\Chrome\User Data
-CHROME_DATA_PATH="C:\Users\SEU_USUARIO\AppData\Local\Google\Chrome\User Data"
-
 # Nome da pasta do perfil que você usa para o Rewards (Ex: "Default", "Profile 1", "Profile 2").
 CHROME_BOT_PROFILE="Profile 1"
 
@@ -106,13 +101,11 @@ CHROME_BOT_PROFILE="Profile 1"
 NIVEL="2"
 ```
 
-**Como Encontrar o `CHROME_DATA_PATH` e o `CHROME_BOT_PROFILE`?**
+**Como Encontrar o `CHROME_BOT_PROFILE`?**
 
 1.  Abra o Google Chrome.
 2.  Digite `chrome://version` na barra de endereços e pressione Enter.
 3.  Procure pelo campo "**Caminho do perfil**".
-    *   O `CHROME_DATA_PATH` é o caminho até a pasta `User Data`.
-        *   Exemplo: `C:\Users\SeuNome\AppData\Local\Google\Chrome\User Data`
     *   O `CHROME_BOT_PROFILE` é o nome da pasta no final do caminho.
         *   Exemplo: `Default`, `Profile 1`, etc.
 
