@@ -48,18 +48,20 @@ Antes de começar, garanta que você tenha os seguintes softwares instalados:
 
 Siga os passos abaixo para preparar o ambiente.
 
-### 1. Crie uma Pasta para o Projeto
 
-Primeiro, crie uma pasta em um local de sua preferência para organizar os arquivos do projeto. Por exemplo, em `C:/`.
+### 2. Obtenha os Arquivos do Projeto
+
+Você pode baixar os arquivos manualmente ou clonar o repositório usando o comando abaixo:
 
 ```bash
-# No Windows, abrindo o C: e criando a pasta
-cd C:/
-mkdir suaPasta
-cd suaPasta
+git clone https://github.com/yanmayck/AutoRewards.git
 ```
-### 2. Obtenha os Arquivos do Projeto
-Baixe ou clone os arquivos do projeto (como `altomacao.py`) para dentro da pasta que você acabou de criar (`C:/suaPasta`).
+
+Depois, acesse a pasta do projeto:
+
+```bash
+cd AutoRewards
+```
 
 ### 3. Crie um Ambiente Virtual (Recomendado)
 Dentro da pasta do projeto, crie e ative um ambiente virtual.
@@ -89,37 +91,31 @@ pip install -r requirements.txt
 # pip install -r requirements.txt --user
 ```
 ### 5. Configure as Variáveis de Ambiente
-O script precisa saber onde encontrar seu perfil do Chrome e outras configurações. Para isso, crie um arquivo chamado `.env` na pasta do projeto. Você pode usar o `.env.example` como base.
 
-Conteúdo do arquivo `.env`:
+O script precisa de um arquivo `.env` na pasta do projeto com as seguintes variáveis:
 
 ```ini
-# Nome da pasta do perfil que você usa para o Rewards (Ex: "Default", "Profile 1", "Profile 2").
-CHROME_BOT_PROFILE="Profile 1"
+# Caminho onde será salvo o perfil do Chrome usado pela automação (recomendado deixar em C:/Perfis_Chrome_Selenium)
+CHROME_DATA_PATH="C:/Perfis_Chrome_Selenium"
 
-# Nível da sua conta no Rewards (1 para 10 pesquisas básicas, 2 para 30 pesquisas completas).
-NIVEL="2"
+# Seu nível no Microsoft Rewards (1 para 10 pesquisas, 2 para 30 pesquisas)
+NIVEL=1
+
+# Nome do perfil da sua automação (pode ser qualquer nome, ex: MeuPerfilPrincipal)
+CHROME_BOT_PROFILE="MeuPerfilPrincipal"
 ```
 
-**Como Encontrar o `CHROME_BOT_PROFILE`?**
-
-1.  Abra o Google Chrome.
-2.  Digite `chrome://version` na barra de endereços e pressione Enter.
-3.  Procure pelo campo "**Caminho do perfil**".
-    *   O `CHROME_BOT_PROFILE` é o nome da pasta no final do caminho.
-        *   Exemplo: `Default`, `Profile 1`, etc.
+> ⚠️ Antes de rodar o robô, crie a pasta `C:/Perfis_Chrome_Selenium` no seu computador. Ela será usada para armazenar o perfil do Chrome exclusivo da automação.
 
 ### 6. (IMPORTANTE) Prepare o Perfil do Chrome
-Este é o passo mais importante para que o robô funcione corretamente.
 
-1.  Crie um novo perfil no Chrome se não quiser usar o seu principal. Você pode fazer isso clicando no ícone do seu perfil no canto superior direito do Chrome e selecionando "**Adicionar**".
-2.  Anote o nome do diretório desse novo perfil (ex: "Profile 2") e atualize a variável `CHROME_BOT_PROFILE` no seu arquivo `.env`.
-3.  Abra o Chrome com este novo perfil.
-4.  Navegue até o site do Microsoft Rewards (`rewards.bing.com`) e faça login com sua conta.
-5.  Marque a opção para "**Manter conectado**" ou "**Salvar senha**" quando o navegador perguntar.
-6.  Feche o navegador.
+1.  Se quiser, crie um novo perfil no Chrome (opcional, recomendado para separar do seu perfil principal). Para isso, clique no ícone do seu perfil no canto superior direito do Chrome e selecione **Adicionar**.
+2.  Anote o nome do diretório desse novo perfil (ex: `Profile 2`) e atualize a variável `CHROME_BOT_PROFILE` no seu arquivo `.env`.
+3.  Abra o Chrome com este novo perfil e faça login no site do Microsoft Rewards (`rewards.bing.com`).
+4.  Marque a opção para **Manter conectado** ou **Salvar senha** quando o navegador perguntar.
+5.  Feche o navegador.
 
-O robô usará este perfil e, como o login já está salvo, ele não precisará digitar usuário e senha a cada execução.
+O robô usará este perfil e, como o login já está salvo, não será necessário digitar usuário e senha a cada execução.
 
 ## ⚙️ Como Funciona o Script (`altomacao.py`)
 
