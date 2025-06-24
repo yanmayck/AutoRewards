@@ -22,19 +22,36 @@ O uso de bots e scripts de automação pode violar os Termos de Serviço da Micr
 
 ## 📂 Estrutura do Projeto
 
-O projeto é composto pelos seguintes arquivos principais:
+O projeto é organizado da seguinte forma:
 
 ```
-robux/
-├── altomacao.py
-├── .env.example (você deve criar um .env a partir dele)
+AutoRewards/
+├── main.py
+├── config.json
 ├── requirements.txt
-└── README.md
+├── .gitignore
+├── README.md
+├── auto/
+│   ├── altomacao.py
+│   └── __init__.py
+└── config/
+    ├── config.py
+    ├── ler_env.py
+    ├── primeiro_login.py
+    └── __init__.py
 ```
 
--   `altomacao.py`: O script principal que contém a lógica de automação.
--   `.env`: Arquivo de configuração de variáveis de ambiente (deve ser criado).
--   `requirements.txt`: Lista as dependências Python necessárias.
+-   `main.py`: O script principal que orquestra a execução do robô, gerencia a configuração inicial e chama as funções de automação.
+-   `auto/`: Contém os scripts de automação.
+    -   `altomacao.py`: Contém a lógica principal para a automação das tarefas do Microsoft Rewards e pesquisas no Bing.
+-   `config/`: Contém os arquivos de configuração do projeto.
+    -   `config.py`: Define configurações do navegador e a lista de termos de pesquisa.
+    -   `ler_env.py`: Responsável por carregar as variáveis de ambiente do arquivo `.env`.
+    -   `primeiro_login.py`: Gerencia a verificação e marcação da configuração inicial do robô.
+-   `config.json`: Arquivo utilizado para marcar se a configuração inicial do robô já foi realizada.
+-   `.env.example`: Exemplo de arquivo de variáveis de ambiente (você deve criar um `.env` a partir dele).
+-   `requirements.txt`: Lista as dependências Python necessárias para o projeto.
+-   `.gitignore`: Define arquivos e diretórios que devem ser ignorados pelo Git, como arquivos de ambiente e caches.
 -   `README.md`: Este arquivo de documentação.
 
 ## 📋 Pré-requisitos
@@ -51,7 +68,7 @@ Siga os passos abaixo para preparar o ambiente.
 
 ### 2. Obtenha os Arquivos do Projeto
 
-Você pode baixar os arquivos manualmente ou clonar o repositório usando o comando abaixo:
+Você pode baixar os arquivos manualmente como um arquivo ZIP clicando em 'Code' e depois em 'Download ZIP' na página do GitHub do projeto, ou clonar o repositório usando o comando abaixo:
 
 ```bash
 git clone https://github.com/yanmayck/AutoRewards.git
@@ -79,6 +96,7 @@ source venv/bin/activate
 Crie um arquivo chamado `requirements.txt` na pasta do projeto com o seguinte conteúdo:
 
 ```
+# Requisitos do projeto para automação Microsoft Rewards
 selenium
 webdriver-manager
 python-dotenv
@@ -117,36 +135,34 @@ CHROME_BOT_PROFILE="MeuPerfilPrincipal"
 
 O robô usará este perfil e, como o login já está salvo, não será necessário digitar usuário e senha a cada execução.
 
-## ⚙️ Como Funciona o Script (`altomacao.py`)
+## ⚙️ Visão Geral do Funcionamento
 
-O script `altomacao.py` orquestra as ações de automação usando a biblioteca Selenium. Abaixo estão os principais passos:
+O robô é orquestrado principalmente pelo script `main.py`, que gerencia o fluxo de execução e a configuração inicial. O script `altomacao.py` contém a lógica detalhada das ações de automação, como o processamento de tarefas e as pesquisas. Abaixo estão os principais passos do funcionamento:
 
-1.  **Carregamento de Variáveis de Ambiente**: Utiliza `python-dotenv` para carregar as configurações (`CHROME_DATA_PATH`, `CHROME_BOT_PROFILE`, `NIVEL`) do arquivo `.env`.
-2.  **Configuração do Navegador**:
-    *   Usa `webdriver-manager` para baixar e gerenciar automaticamente o ChromeDriver compatível com sua versão do Chrome.
-    *   Configura o Chrome para usar um perfil específico (`--user-data-dir` e `--profile-directory`), garantindo que a sessão logada do Microsoft Rewards seja reutilizada.
-    *   O navegador é iniciado maximizado.
-3.  **Execução da Automação de Tarefas (`executar_automacao_rewards`)**:
+1.  **Verificação e Configuração Inicial**: O `main.py` verifica se o robô já foi configurado. Se não, ele executa um processo de configuração inicial para criar o perfil do Chrome e carregar as variáveis de ambiente.
+2.  **Carregamento de Variáveis de Ambiente**: Utiliza `python-dotenv` para carregar as configurações (`CHROME_DATA_PATH`, `CHROME_BOT_PROFILE`, `NIVEL`) do arquivo `.env`.
+3.  **Configuração do Navegador**: O `config.py` configura o Chrome para usar um perfil específico (`--user-data-dir` e `--profile-directory`), garantindo que a sessão logada do Microsoft Rewards seja reutilizada. O navegador é iniciado maximizado.
+4.  **Execução da Automação de Tarefas (`executar_automacao_rewards` em `altomacao.py`)**:
     *   Navega para `https://rewards.bing.com/`.
     *   Aguarda e localiza os "cartões" de tarefas disponíveis na página.
     *   Itera sobre os cartões, clicando em cada um para ativá-los.
     *   Para cada clique, uma nova aba é aberta. O script alterna para essa nova aba, aguarda um tempo para que a tarefa seja registrada, fecha a aba e retorna para a aba principal do Rewards. Isso evita a `StaleElementReferenceException` ao re-localizar os elementos após o retorno.
     *   Cartões desabilitados são automaticamente pulados.
-4.  **Realização de Pesquisas (`realizar_pesquisas_aleatorias`)**:
+5.  **Realização de Pesquisas (`realizar_pesquisas_aleatorias` em `altomacao.py`)**:
     *   Baseado na variável `NIVEL` do `.env`:
         *   `NIVEL="1"`: Realiza 10 pesquisas aleatórias.
         *   `NIVEL="2"`: Realiza 30 pesquisas aleatórias.
     *   Um termo de pesquisa é sorteado de uma lista pré-definida de termos (para simular comportamento humano e obter variedade).
     *   Navega para `https://www.bing.com/`, encontra o campo de busca, digita o termo sorteado e submete a pesquisa.
     *   Após cada pesquisa, uma pequena pausa aleatória é inserida.
-5.  **Tratamento de Erros e Logs**: O script inclui tratamento básico de exceções e imprime mensagens coloridas no terminal para indicar o progresso e quaisquer problemas encontrados.
+6.  **Tratamento de Erros e Logs**: O robô inclui tratamento básico de exceções e imprime mensagens coloridas no terminal para indicar o progresso e quaisquer problemas encontrados.
 
 ## ▶️ Como Executar
 
-Com tudo configurado, abra o terminal na pasta do seu projeto (`C:/suaPasta`) e execute o script:
+Com tudo configurado, abra o terminal na pasta do seu projeto (`C:/suaPasta`) e execute o script principal:
 
 ```bash
-python altomacao.py
+python main.py
 ```
 O robô iniciará, abrirá o navegador no perfil correto e começará a executar as tarefas. Sente-se, relaxe e acompanhe o progresso pelo terminal!
 

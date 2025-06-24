@@ -1,5 +1,5 @@
-from auto.altomacao import configurar_navegador
-from config.config import nome_do_perfil, caminho_user_data, Estilos
+from config.config import configurar_navegador,Estilos
+from config.ler_env import nome_do_perfil, caminho_user_data
 from selenium.webdriver.support.ui import WebDriverWait
 
 

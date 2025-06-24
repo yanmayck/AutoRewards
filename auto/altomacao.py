@@ -1,26 +1,23 @@
+# robux/auto/altomacao.py
+
 # Imports necessários para a solução
 import time
 import random
-import config
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
-import config.config as config
-from config.config import configurar_navegador
-from config.ler_env import caminho_user_data, nome_do_perfil
-# --- Constantes de Cores e Ícones para o Terminal ---
 
+# Importa a FUNÇÃO de configurar o navegador do módulo 'config'
+import config.config as config 
+
+# Importa as VARIÁVEIS lidas do .env do módulo 'ler_env'
+from config.ler_env import caminho_user_data, nome_do_perfil, nivel
 
 
 def processar_aba_tarefa(driver, wait, aba_original):
     """
     Gerencia a troca de abas para processar uma tarefa do Rewards.
-
-    Args:
-        driver (webdriver.Chrome): A instância do driver do Selenium.
-        wait (WebDriverWait): A instância do WebDriverWait.
-        aba_original (str): O identificador da janela da aba principal.
     """
     print(f"{config.Estilos.WAIT_ICON} {config.Estilos.CYAN}   Aguardando a nova aba abrir...{config.Estilos.ENDC}")
     wait.until(EC.number_of_windows_to_be(2))
@@ -41,13 +38,9 @@ def processar_aba_tarefa(driver, wait, aba_original):
     driver.switch_to.window(aba_original)
 
 
-
 def executar_automacao_rewards(driver):
     """
     Executa a automação principal na página do Bing Rewards.
-
-    Args:
-        driver (webdriver.Chrome): A instância do driver do Selenium.
     """
     driver.get("https://rewards.bing.com/")
     
@@ -100,16 +93,11 @@ def executar_automacao_rewards(driver):
             driver.switch_to.window(aba_original)
 
 
-
-def realizar_pesquisas_aleatorias(driver, lista_termos,nivel ):
+def realizar_pesquisas_aleatorias(driver, lista_termos, nivel):
     """
     Realiza um número definido de pesquisas aleatórias no Bing.
-
-    :param driver: A instância do WebDriver.
-    :param lista_termos: A lista de strings de onde os termos serão sorteados.
-    :param numero_de_pesquisas: Quantas pesquisas devem ser feitas.
     """
-    if nivel ==1:
+    if nivel == "1":
         numero_de_pesquisas = 10
     else:
         numero_de_pesquisas = 30
@@ -121,31 +109,23 @@ def realizar_pesquisas_aleatorias(driver, lista_termos,nivel ):
         try:
             print(f"\n--- Pesquisa #{i+1}/{numero_de_pesquisas} ---")
             
-            # a. Sorteia um termo da lista
             termo_aleatorio = random.choice(lista_termos)
             print(f"Termo sorteado: '{termo_aleatorio}'")
             
-            # b. Garante que estamos na página de busca
-            #    Se não for a primeira pesquisa, a página de resultados estará aberta.
-            #    Navegar para o Bing.com reseta o estado.
             driver.get("https://www.bing.com/")
 
-            # c. Encontra o campo de busca (ESSENCIAL fazer isso DENTRO do loop)
             campo_busca = wait.until(EC.visibility_of_element_located(localizador_campo_busca))
             
-            # d. Limpa o campo, digita e envia
-            campo_busca.clear() # Limpa o campo para garantir que está vazio
+            campo_busca.clear()
             campo_busca.send_keys(termo_aleatorio)
             campo_busca.submit()
             
             print("Pesquisa realizada com sucesso.")
             
-            # g. Pausa "humana"
             time.sleep(random.uniform(3, 6))
 
         except Exception as e:
             print(f"Ocorreu um erro na pesquisa #{i+1}: {e}")
-            # Se der um erro, podemos tentar ir para a próxima pesquisa
             continue
             
 
@@ -153,17 +133,21 @@ def main():
     """
     Função principal que orquestra a execução do robô.
     """
-   
-
-    if not config.caminho_user_data or not config.nome_do_perfil:
+    if not caminho_user_data or not nome_do_perfil:
         print(f"{config.Estilos.FAIL}{config.Estilos.ERROR_ICON} Variáveis de ambiente CHROME_DATA_PATH ou CHROME_BOT_PROFILE não definidas.{config.Estilos.ENDC}")
         return
 
     driver = None  # Inicializa driver como None
     try:
-        driver = configurar_navegador(caminho_user_data,nome_do_perfil)
+        # ==================================================================
+        # A CORREÇÃO ESTÁ AQUI:
+        # As variáveis 'caminho_user_data' e 'nome_do_perfil' são usadas
+        # diretamente, sem o prefixo 'config.', pois vêm de 'ler_env'.
+        driver = config.configurar_navegador(caminho_user_data, nome_do_perfil)
+        # ==================================================================
+
         executar_automacao_rewards(driver)
-        realizar_pesquisas_aleatorias(driver, config.total_pesquisas,config.nivel)
+        realizar_pesquisas_aleatorias(driver, config.total_pesquisas, nivel)
         print(f"\n{config.Estilos.BOLD}{'='*60}{config.Estilos.ENDC}")
         print(f"{config.Estilos.SUCCESS_ICON} {config.Estilos.HEADER}{config.Estilos.BOLD} TODOS OS CARTÕES FORAM PROCESSADOS! {config.Estilos.SUCCESS_ICON}{config.Estilos.ENDC}")
 
@@ -181,5 +165,7 @@ def main():
             driver.quit()
             print(f"{config.Estilos.ROBOT_ICON} {config.Estilos.BLUE}Navegador fechado. Sessão encerrada.{config.Estilos.ENDC}")
 
+# Esta parte não é necessária quando 'altomacao.py' é chamado por 'main.py',
+# mas não causa mal em mantê-la.
 if __name__ == "__main__":
     main()
