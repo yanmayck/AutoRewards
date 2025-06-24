@@ -1,3 +1,4 @@
+# Requisitos do projeto para automação Microsoft Rewards
 selenium
 webdriver-manager
 python-dotenv
