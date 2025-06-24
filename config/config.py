@@ -6,17 +6,7 @@ from selenium import webdriver
 
     
 def configurar_navegador(caminho_user_data, nome_do_perfil):
-    """
-    Configura e inicializa o navegador Chrome com as opções especificadas.
-
-    Args:
-        caminho_user_data (str): Caminho para o diretório de dados do usuário do Chrome.
-        nome_do_perfil (str): Nome do perfil do Chrome a ser usado.
-
-    Returns:
-        webdriver.Chrome: Instância do driver do Chrome configurada.
-
-    """
+   
     
     print(f"{Estilos.HEADER}{Estilos.ROBOT_ICON} Iniciando o Robô de Automação Rewards...{Estilos.ENDC}")
     

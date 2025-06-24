@@ -4,6 +4,7 @@ from auto.altomacao import main
 from config.primeiro_login import caminho_pasta, precisa_configurar, garantir_configuracao_feita
 from config.ler_env import autocaminho, caminho_user_data, nome_do_perfil # <<<---- IMPORTADO AQUI
 from config.config import configurar_navegador
+from auto.mobile import iniciar_chrome_mobile
 
 if __name__ == "__main__":
     if precisa_configurar():
@@ -27,7 +28,9 @@ if __name__ == "__main__":
             print("Por favor, tente rodar o programa novamente.")
     
         # Se a configuração não for necessária, executa o robô principal
-    try:       
+    try:   
+        iniciar_chrome_mobile(caminho_user_data,nome_do_perfil,"Samsung Galaxy S20 Ultra" )
+        input()
         main()
     except KeyboardInterrupt:
         print("\nPrograma finalizado pelo usuário.")
