@@ -1,9 +1,10 @@
 # Imports necessários para a solução
 import time
-import os
 import random
+import config
 from dotenv import load_dotenv
 from selenium import webdriver
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -11,100 +12,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
-
+import config.config as config
 # --- Constantes de Cores e Ícones para o Terminal ---
-class Estilos:
-    HEADER = '\033[95m'
-    BLUE = '\033[94m'
-    CYAN = '\033[96m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    INFO_ICON = "ℹ️ "
-    SUCCESS_ICON = "✅"
-    WAIT_ICON = "⏳"
-    CARD_ICON = "🃏"
-    TAB_ICON = "📑"
-    ERROR_ICON = "❌"
-    STOP_ICON = "🛑"
-    ROBOT_ICON = "🤖"
-
-
-total_pesquisas = [
-    # Perguntas Gerais e Curiosidades
-    "o que é a teoria da relatividade",
-    "quem foi Santos Dumont",
-    "fases da lua em 2025",
-    "maiores desertos do mundo",
-    "história da invenção do telefone",
-    "quantos países existem no mundo",
-    "o que significa a sigla UNESCO",
-    "como fazer um nó de gravata",
-    
-    # Tecnologia e Internet
-    "o que é blockchain",
-    "melhores celulares custo-benefício 2025",
-    "Python vs JavaScript qual usar",
-    "como funciona a internet 5G",
-    "lançamentos de placas de vídeo",
-    "o que é um ataque de phishing",
-    "história da Microsoft",
-    
-    # Cultura Pop e Entretenimento
-    "próximos lançamentos da Netflix",
-    "filmes em cartaz nos cinemas",
-    "músicas mais tocadas no Spotify Brasil",
-    "vencedores do Oscar de melhor filme",
-    "biografia da Anitta",
-    "jogos mais esperados do ano",
-    "o que é um dorama",
-    
-    # Viagens e Geografia (com toque local)
-    "pontos turísticos de Caldas Novas, GO",
-    "melhores praias do Nordeste brasileiro",
-    "o que fazer em Pirenópolis",
-    "qual a capital da Nova Zelândia",
-    "clima em Gramado, RS",
-    "sete maravilhas do mundo moderno",
-    "Parque Nacional da Chapada dos Veadeiros",
-    "Rio Araguaia",
-    
-    # Culinária e Receitas (com toque local)
-    "receita de pamonha goiana",
-    "como fazer feijoada completa",
-    "benefícios do pequi para a saúde",
-    "melhores vinhos para iniciantes",
-    "receita de bolo de fubá cremoso",
-    "como temperar frango para assar",
-    "comidas típicas do Centro-Oeste",
-    
-    # Ciência e Natureza
-    "animais em extinção no Cerrado",
-    "planetas do sistema solar em ordem",
-    "como as abelhas produzem mel",
-    "o que são buracos negros",
-    "curiosidades sobre o corpo humano",
-    "tipos de rochas",
-    
-    # Saúde e Bem-estar
-    "exercícios para fazer em casa",
-    "benefícios da meditação guiada",
-    "receitas de lanches saudáveis",
-    "como melhorar a qualidade do sono",
-    "dicas para beber mais água",
-    
-    # Notícias e Assuntos Gerais
-    "cotação do dólar hoje",
-    "resultados do campeonato brasileiro",
-    "previsão do tempo para amanhã",
-    "notícias de economia no Brasil",
-    "principais índices da bolsa de valores",
-]
-
-
 
 def configurar_navegador(caminho_user_data, nome_do_perfil):
     """
@@ -117,7 +26,7 @@ def configurar_navegador(caminho_user_data, nome_do_perfil):
     Returns:
         webdriver.Chrome: Instância do driver do Chrome configurada.
     """
-    print(f"{Estilos.HEADER}{Estilos.ROBOT_ICON} Iniciando o Robô de Automação Rewards...{Estilos.ENDC}")
+    print(f"{config.Estilos.HEADER}{config.Estilos.ROBOT_ICON} Iniciando o Robô de Automação Rewards...{config.Estilos.ENDC}")
     
     service = ChromeService(executable_path=ChromeDriverManager().install())
     chrome_options = Options()
@@ -137,7 +46,7 @@ def processar_aba_tarefa(driver, wait, aba_original):
         wait (WebDriverWait): A instância do WebDriverWait.
         aba_original (str): O identificador da janela da aba principal.
     """
-    print(f"{Estilos.WAIT_ICON} {Estilos.CYAN}   Aguardando a nova aba abrir...{Estilos.ENDC}")
+    print(f"{config.Estilos.WAIT_ICON} {config.Estilos.CYAN}   Aguardando a nova aba abrir...{config.Estilos.ENDC}")
     wait.until(EC.number_of_windows_to_be(2))
 
     # Muda o foco para a nova aba
@@ -146,13 +55,13 @@ def processar_aba_tarefa(driver, wait, aba_original):
             driver.switch_to.window(handle)
             break
             
-    print(f"{Estilos.TAB_ICON} {Estilos.GREEN}   Foco na nova aba: '{driver.title[:40]}...'{Estilos.ENDC}")
+    print(f"{config.Estilos.TAB_ICON} {config.Estilos.GREEN}   Foco na nova aba: '{driver.title[:40]}...'{config.Estilos.ENDC}")
     time.sleep(5)  # Mantém a espera para a tarefa ser processada
 
-    print(f"{Estilos.TAB_ICON} {Estilos.BLUE}   Fechando a aba da tarefa...{Estilos.ENDC}")
+    print(f"{config.Estilos.TAB_ICON} {config.Estilos.BLUE}   Fechando a aba da tarefa...{config.Estilos.ENDC}")
     driver.close()
 
-    print(f"{Estilos.TAB_ICON} {Estilos.BLUE}   Retornando foco para a aba principal...{Estilos.ENDC}")
+    print(f"{config.Estilos.TAB_ICON} {config.Estilos.BLUE}   Retornando foco para a aba principal...{config.Estilos.ENDC}")
     driver.switch_to.window(aba_original)
 
 def executar_automacao_rewards(driver):
@@ -167,23 +76,23 @@ def executar_automacao_rewards(driver):
     localizador_dos_cartoes = (By.CSS_SELECTOR, ".ds-card-sec.ng-scope")
     wait = WebDriverWait(driver, 20)
 
-    print(f"\n{Estilos.WAIT_ICON} {Estilos.CYAN}Aguardando os cartões aparecerem na página principal...{Estilos.ENDC}")
+    print(f"\n{config.Estilos.WAIT_ICON} {config.Estilos.CYAN}Aguardando os cartões aparecerem na página principal...{config.Estilos.ENDC}")
     cartoes = wait.until(EC.presence_of_all_elements_located(localizador_dos_cartoes))
     numero_de_cartoes = len(cartoes)
-    print(f"{Estilos.SUCCESS_ICON} {Estilos.GREEN}Sucesso! {numero_de_cartoes} cartões encontrados.{Estilos.ENDC}")
+    print(f"{config.Estilos.SUCCESS_ICON} {config.Estilos.GREEN}Sucesso! {numero_de_cartoes} cartões encontrados.{config.Estilos.ENDC}")
 
     aba_original = driver.current_window_handle
-    print(f"{Estilos.INFO_ICON} {Estilos.BLUE}Aba principal identificada: {aba_original}{Estilos.ENDC}")
-    print(f"{Estilos.BOLD}{'='*60}{Estilos.ENDC}")
+    print(f"{config.Estilos.INFO_ICON} {config.Estilos.BLUE}Aba principal identificada: {aba_original}{config.Estilos.ENDC}")
+    print(f"{config.Estilos.BOLD}{'='*60}{config.Estilos.ENDC}")
     
     listaNumerosNaoAceitos = [3, 4, 5, 6]
 
     for i in range(numero_de_cartoes):
         if i  in listaNumerosNaoAceitos:
-            print(f"\n{Estilos.INFO_ICON} {Estilos.BLUE}Pulando cartão #{i+1} conforme lista de exclusão.{Estilos.ENDC}")
+            print(f"\n{config.Estilos.INFO_ICON} {config.Estilos.BLUE}Pulando cartão #{i+1} conforme lista de exclusão.{config.Estilos.ENDC}")
             continue
 
-        print(f"\n{Estilos.CARD_ICON} {Estilos.BOLD}Processando Cartão #{i+1} de {numero_de_cartoes}{Estilos.ENDC}")
+        print(f"\n{config.Estilos.CARD_ICON} {config.Estilos.BOLD}Processando Cartão #{i+1} de {numero_de_cartoes}{config.Estilos.ENDC}")
         
         try:
             # Re-localiza os cartões a cada iteração para evitar 'StaleElementReferenceException'
@@ -191,7 +100,7 @@ def executar_automacao_rewards(driver):
             cartao_atual = cartoes[i]
 
             if "disabled" in cartao_atual.get_attribute("class"):
-                print(f"{Estilos.WARNING}   -> Cartão #{i+1} está desabilitado. Pulando.{Estilos.ENDC}")
+                print(f"{config.Estilos.WARNING}   -> Cartão #{i+1} está desabilitado. Pulando.{config.Estilos.ENDC}")
                 continue
 
             # Tenta clicar no cartão
@@ -200,15 +109,15 @@ def executar_automacao_rewards(driver):
             # Processa a nova aba que foi aberta
             processar_aba_tarefa(driver, wait, aba_original)
             
-            print(f"{Estilos.SUCCESS_ICON} {Estilos.GREEN}   Cartão #{i+1} processado com sucesso!{Estilos.ENDC}")
+            print(f"{config.Estilos.SUCCESS_ICON} {config.Estilos.GREEN}   Cartão #{i+1} processado com sucesso!{config.Estilos.ENDC}")
             # Aguarda a página principal estar pronta novamente
             wait.until(EC.visibility_of_element_located(localizador_dos_cartoes))
             
         except StaleElementReferenceException:
-            print(f"{Estilos.WARNING}   -> Ocorreu um StaleElementReferenceException. Tentando novamente a iteração...{Estilos.ENDC}")
+            print(f"{config.Estilos.WARNING}   -> Ocorreu um StaleElementReferenceException. Tentando novamente a iteração...{config.Estilos.ENDC}")
             continue # Pula para a próxima iteração, o elemento será re-localizado
         except Exception as e:
-            print(f"{Estilos.ERROR_ICON} {Estilos.FAIL}   Ocorreu um erro ao processar o cartão #{i+1}: {e}{Estilos.ENDC}")
+            print(f"{config.Estilos.ERROR_ICON} {config.Estilos.FAIL}   Ocorreu um erro ao processar o cartão #{i+1}: {e}{config.Estilos.ENDC}")
             # Se o erro foi crítico, pode ser melhor voltar para a aba principal e continuar
             driver.switch_to.window(aba_original)
 def realizar_pesquisas_aleatorias(driver, lista_termos,nivel ):
@@ -263,36 +172,33 @@ def main():
     """
     Função principal que orquestra a execução do robô.
     """
-    load_dotenv()
-    caminho_user_data = os.getenv("CHROME_DATA_PATH")
-    nome_do_perfil = os.getenv("CHROME_BOT_PROFILE")
-    nivel = os.getenv("NIVEL")
+   
 
-    if not caminho_user_data or not nome_do_perfil:
-        print(f"{Estilos.FAIL}{Estilos.ERROR_ICON} Variáveis de ambiente CHROME_DATA_PATH ou CHROME_BOT_PROFILE não definidas.{Estilos.ENDC}")
+    if not config.caminho_user_data or not config.nome_do_perfil:
+        print(f"{config.Estilos.FAIL}{config.Estilos.ERROR_ICON} Variáveis de ambiente CHROME_DATA_PATH ou CHROME_BOT_PROFILE não definidas.{config.Estilos.ENDC}")
         return
 
     driver = None  # Inicializa driver como None
     try:
-        driver = configurar_navegador(caminho_user_data, nome_do_perfil)
+        driver = configurar_navegador(config.caminho_user_data, config.nome_do_perfil)
         executar_automacao_rewards(driver)
-        realizar_pesquisas_aleatorias(driver, total_pesquisas,nivel)
-        print(f"\n{Estilos.BOLD}{'='*60}{Estilos.ENDC}")
-        print(f"{Estilos.SUCCESS_ICON} {Estilos.HEADER}{Estilos.BOLD} TODOS OS CARTÕES FORAM PROCESSADOS! {Estilos.SUCCESS_ICON}{Estilos.ENDC}")
+        realizar_pesquisas_aleatorias(driver, config.total_pesquisas,config.nivel)
+        print(f"\n{config.Estilos.BOLD}{'='*60}{config.Estilos.ENDC}")
+        print(f"{config.Estilos.SUCCESS_ICON} {config.Estilos.HEADER}{config.Estilos.BOLD} TODOS OS CARTÕES FORAM PROCESSADOS! {config.Estilos.SUCCESS_ICON}{config.Estilos.ENDC}")
 
     except TimeoutException:
-        print(f"\n{Estilos.ERROR_ICON} {Estilos.FAIL}{Estilos.BOLD}ERRO: O tempo de espera acabou. Os cartões não foram encontrados ou a página não carregou.{Estilos.ENDC}")
+        print(f"\n{config.Estilos.ERROR_ICON} {config.Estilos.FAIL}{config.Estilos.BOLD}ERRO: O tempo de espera acabou. Os cartões não foram encontrados ou a página não carregou.{config.Estilos.ENDC}")
     except KeyboardInterrupt:
-        print(f"\n{Estilos.STOP_ICON} {Estilos.WARNING}{Estilos.BOLD} Programa finalizado pelo usuário.{Estilos.ENDC}")
+        print(f"\n{config.Estilos.STOP_ICON} {config.Estilos.WARNING}{config.Estilos.BOLD} Programa finalizado pelo usuário.{config.Estilos.ENDC}")
     except Exception as e:
-        print(f"\n{Estilos.ERROR_ICON} {Estilos.FAIL}{Estilos.BOLD}Ocorreu um erro inesperado na execução principal: {e}{Estilos.ENDC}")
+        print(f"\n{config.Estilos.ERROR_ICON} {config.Estilos.FAIL}{config.Estilos.BOLD}Ocorreu um erro inesperado na execução principal: {e}{config.Estilos.ENDC}")
     
     finally:
         if driver:
-            print(f"\n{Estilos.INFO_ICON} {Estilos.CYAN}O navegador permanecerá aberto por 10 segundos antes de fechar.{Estilos.ENDC}")
+            print(f"\n{config.Estilos.INFO_ICON} {config.Estilos.CYAN}O navegador permanecerá aberto por 10 segundos antes de fechar.{config.Estilos.ENDC}")
             time.sleep(10)
             driver.quit()
-            print(f"{Estilos.ROBOT_ICON} {Estilos.BLUE}Navegador fechado. Sessão encerrada.{Estilos.ENDC}")
+            print(f"{config.Estilos.ROBOT_ICON} {config.Estilos.BLUE}Navegador fechado. Sessão encerrada.{config.Estilos.ENDC}")
 
 if __name__ == "__main__":
     main()
