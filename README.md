@@ -39,17 +39,19 @@ AutoRewards/
     ├── ler_env.py
     ├── primeiro_login.py
     └── __init__.py
+├── configuracao.py
 ```
 
--   `main.py`: O script principal que orquestra a execução do robô, gerencia a configuração inicial e chama as funções de automação.
+-   `main.py`: O script principal que orquestra a execução do robô, gerencia a configuração inicial (incluindo a criação automática do arquivo `.env` e `config.json`) e chama as funções de automação.
 -   `auto/`: Contém os scripts de automação.
     -   `altomacao.py`: Contém a lógica principal para a automação das tarefas do Microsoft Rewards e pesquisas no Bing.
 -   `config/`: Contém os arquivos de configuração do projeto.
     -   `config.py`: Define configurações do navegador e a lista de termos de pesquisa.
-    -   `ler_env.py`: Responsável por carregar as variáveis de ambiente do arquivo `.env`.
-    -   `primeiro_login.py`: Gerencia a verificação e marcação da configuração inicial do robô.
+    -   `ler_env.py`: Responsável por carregar as variáveis de ambiente e criar/atualizar o arquivo `.env` automaticamente.
+    -   `primeiro_login.py`: Gerencia a verificação e marcação da configuração inicial do robô, criando o arquivo `config.json`.
+-   `configuracao.py`: Um script utilitário para abrir o navegador (Google Chrome) a qualquer momento, útil para verificar o perfil ou para realizar a configuração de login manual.
 -   `config.json`: Arquivo utilizado para marcar se a configuração inicial do robô já foi realizada.
--   `.env.example`: Exemplo de arquivo de variáveis de ambiente (você deve criar um `.env` a partir dele).
+-   `.env.example`: Arquivo de exemplo que mostra as variáveis de ambiente necessárias. O arquivo `.env` real é criado e preenchido automaticamente pelo robô na primeira execução do `main.py`.
 -   `requirements.txt`: Lista as dependências Python necessárias para o projeto.
 -   `.gitignore`: Define arquivos e diretórios que devem ser ignorados pelo Git, como arquivos de ambiente e caches.
 -   `README.md`: Este arquivo de documentação.
@@ -110,7 +112,7 @@ pip install -r requirements.txt
 ```
 ### 5. Configure as Variáveis de Ambiente
 
-O script precisa de um arquivo `.env` na pasta do projeto com as seguintes variáveis:
+O robô irá criar e preencher automaticamente o arquivo `.env` na primeira execução do `main.py`. Ele conterá as seguintes variáveis padrão:
 
 ```ini
 # Caminho onde será salvo o perfil do Chrome usado pela automação (recomendado deixar em C:/Perfis_Chrome_Selenium)
@@ -122,6 +124,8 @@ NIVEL=1
 # Nome do perfil da sua automação (pode ser qualquer nome, ex: MeuPerfilPrincipal)
 CHROME_BOT_PROFILE="MeuPerfilPrincipal"
 ```
+
+Você pode editar este arquivo `.env` manualmente se desejar alterar os caminhos ou o nível de pesquisa, mas certifique-se de que a pasta `C:/Perfis_Chrome_Selenium` exista antes de rodar o robô.
 
 > ⚠️ Antes de rodar o robô, crie a pasta `C:/Perfis_Chrome_Selenium` no seu computador. Ela será usada para armazenar o perfil do Chrome exclusivo da automação.
 
@@ -137,18 +141,18 @@ O robô usará este perfil e, como o login já está salvo, não será necessár
 
 ## ⚙️ Visão Geral do Funcionamento
 
-O robô é orquestrado principalmente pelo script `main.py`, que gerencia o fluxo de execução e a configuração inicial. O script `altomacao.py` contém a lógica detalhada das ações de automação, como o processamento de tarefas e as pesquisas. Abaixo estão os principais passos do funcionamento:
+O robô é orquestrado principalmente pelo script `main.py`, que gerencia o fluxo de execução e a configuração inicial (incluindo a criação automática do `.env` e `config.json`). O script `altomacao.py` contém a lógica detalhada das ações de automação, como o processamento de tarefas e as pesquisas. Abaixo estão os principais passos do funcionamento:
 
-1.  **Verificação e Configuração Inicial**: O `main.py` verifica se o robô já foi configurado. Se não, ele executa um processo de configuração inicial para criar o perfil do Chrome e carregar as variáveis de ambiente.
+1.  **Configuração Inicial Automatizada**: Na primeira execução do `main.py`, o robô verifica se já foi configurado. Se não, ele executa um processo para criar automaticamente o arquivo `.env` (se não existir), o arquivo `config.json` e o perfil do Chrome, garantindo que as variáveis de ambiente essenciais sejam definidas.
 2.  **Carregamento de Variáveis de Ambiente**: Utiliza `python-dotenv` para carregar as configurações (`CHROME_DATA_PATH`, `CHROME_BOT_PROFILE`, `NIVEL`) do arquivo `.env`.
-3.  **Configuração do Navegador**: O `config.py` configura o Chrome para usar um perfil específico (`--user-data-dir` e `--profile-directory`), garantindo que a sessão logada do Microsoft Rewards seja reutilizada. O navegador é iniciado maximizado.
-4.  **Execução da Automação de Tarefas (`executar_automacao_rewards` em `altomacao.py`)**:
+3.  **Configuração do Navegador**: O `config/config.py` configura o Chrome para usar um perfil específico (`--user-data-dir` e `--profile-directory`), garantindo que a sessão logada do Microsoft Rewards seja reutilizada. O navegador é iniciado maximizado.
+4.  **Execução da Automação de Tarefas (`executar_automacao_rewards` em `auto/altomacao.py`)**:
     *   Navega para `https://rewards.bing.com/`.
     *   Aguarda e localiza os "cartões" de tarefas disponíveis na página.
     *   Itera sobre os cartões, clicando em cada um para ativá-los.
     *   Para cada clique, uma nova aba é aberta. O script alterna para essa nova aba, aguarda um tempo para que a tarefa seja registrada, fecha a aba e retorna para a aba principal do Rewards. Isso evita a `StaleElementReferenceException` ao re-localizar os elementos após o retorno.
     *   Cartões desabilitados são automaticamente pulados.
-5.  **Realização de Pesquisas (`realizar_pesquisas_aleatorias` em `altomacao.py`)**:
+5.  **Realização de Pesquisas (`realizar_pesquisas_aleatorias` em `auto/altomacao.py`)**:
     *   Baseado na variável `NIVEL` do `.env`:
         *   `NIVEL="1"`: Realiza 10 pesquisas aleatórias.
         *   `NIVEL="2"`: Realiza 30 pesquisas aleatórias.
@@ -159,12 +163,19 @@ O robô é orquestrado principalmente pelo script `main.py`, que gerencia o flux
 
 ## ▶️ Como Executar
 
-Com tudo configurado, abra o terminal na pasta do seu projeto (`C:/suaPasta`) e execute o script principal:
+Com tudo configurado, abra o terminal na pasta do seu projeto (`C:/suaPasta`) e execute o script principal para iniciar a automação:
 
 ```bash
 python main.py
 ```
-O robô iniciará, abrirá o navegador no perfil correto e começará a executar as tarefas. Sente-se, relaxe e acompanhe o progresso pelo terminal!
+
+Para abrir o navegador a qualquer momento (por exemplo, para verificar o perfil ou realizar o login manualmente), você pode executar o script utilitário:
+
+```bash
+python configuracao.py
+```
+
+O robô iniciará (se `main.py` for executado), abrirá o navegador no perfil correto e começará a executar as tarefas. Sente-se, relaxe e acompanhe o progresso pelo terminal!
 
 ## ❓ Resolução de Problemas Comuns
 
