@@ -2,40 +2,16 @@
 import time
 import random
 import config
-from dotenv import load_dotenv
-from selenium import webdriver
-
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 import config.config as config
+from config.config import configurar_navegador
+from config.ler_env import caminho_user_data, nome_do_perfil
 # --- Constantes de Cores e Ícones para o Terminal ---
 
-def configurar_navegador(caminho_user_data, nome_do_perfil):
-    """
-    Configura e inicializa o navegador Chrome com as opções especificadas.
 
-    Args:
-        caminho_user_data (str): Caminho para o diretório de dados do usuário do Chrome.
-        nome_do_perfil (str): Nome do perfil do Chrome a ser usado.
-
-    Returns:
-        webdriver.Chrome: Instância do driver do Chrome configurada.
-    """
-    print(f"{config.Estilos.HEADER}{config.Estilos.ROBOT_ICON} Iniciando o Robô de Automação Rewards...{config.Estilos.ENDC}")
-    
-    service = ChromeService(executable_path=ChromeDriverManager().install())
-    chrome_options = Options()
-    chrome_options.add_argument(f"--user-data-dir={caminho_user_data}")
-    chrome_options.add_argument(f"--profile-directory={nome_do_perfil}")
-    chrome_options.add_argument("--start-maximized")
-    
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    return driver
 
 def processar_aba_tarefa(driver, wait, aba_original):
     """
@@ -63,6 +39,8 @@ def processar_aba_tarefa(driver, wait, aba_original):
 
     print(f"{config.Estilos.TAB_ICON} {config.Estilos.BLUE}   Retornando foco para a aba principal...{config.Estilos.ENDC}")
     driver.switch_to.window(aba_original)
+
+
 
 def executar_automacao_rewards(driver):
     """
@@ -120,6 +98,9 @@ def executar_automacao_rewards(driver):
             print(f"{config.Estilos.ERROR_ICON} {config.Estilos.FAIL}   Ocorreu um erro ao processar o cartão #{i+1}: {e}{config.Estilos.ENDC}")
             # Se o erro foi crítico, pode ser melhor voltar para a aba principal e continuar
             driver.switch_to.window(aba_original)
+
+
+
 def realizar_pesquisas_aleatorias(driver, lista_termos,nivel ):
     """
     Realiza um número definido de pesquisas aleatórias no Bing.
@@ -180,7 +161,7 @@ def main():
 
     driver = None  # Inicializa driver como None
     try:
-        driver = configurar_navegador(config.caminho_user_data, config.nome_do_perfil)
+        driver = configurar_navegador(caminho_user_data,nome_do_perfil)
         executar_automacao_rewards(driver)
         realizar_pesquisas_aleatorias(driver, config.total_pesquisas,config.nivel)
         print(f"\n{config.Estilos.BOLD}{'='*60}{config.Estilos.ENDC}")

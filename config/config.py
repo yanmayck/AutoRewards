@@ -1,8 +1,33 @@
-from dotenv import load_dotenv
-import os
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+
+
     
+def configurar_navegador(caminho_user_data, nome_do_perfil):
+    """
+    Configura e inicializa o navegador Chrome com as opções especificadas.
+
+    Args:
+        caminho_user_data (str): Caminho para o diretório de dados do usuário do Chrome.
+        nome_do_perfil (str): Nome do perfil do Chrome a ser usado.
+
+    Returns:
+        webdriver.Chrome: Instância do driver do Chrome configurada.
+
+    """
     
+    print(f"{Estilos.HEADER}{Estilos.ROBOT_ICON} Iniciando o Robô de Automação Rewards...{Estilos.ENDC}")
     
+    service = ChromeService(executable_path=ChromeDriverManager().install())
+    chrome_options = Options()
+    chrome_options.add_argument(f"--user-data-dir={caminho_user_data}")
+    chrome_options.add_argument(f"--profile-directory={nome_do_perfil}")
+    chrome_options.add_argument("--start-maximized")
+    
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    return driver  
     
     
 total_pesquisas = [
@@ -96,7 +121,7 @@ class Estilos:
     ROBOT_ICON = "🤖"
 
 
-load_dotenv()
-caminho_user_data = os.getenv("CHROME_DATA_PATH")
-nome_do_perfil = os.getenv("CHROME_BOT_PROFILE")
-nivel = os.getenv("NIVEL")
+
+
+
+
